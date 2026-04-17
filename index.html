@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISC2 CC Practice Assessment · 50 Questions</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--accent:#0070d2;--accent2:#e8274b;--green:#059669;--orange:#d97706;--teal:#0891b2;--purple:#7c3aed;--text:#0f172a;--muted:#475569;--border:#e2e8f0;--code-bg:#1e2433;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100svh;}
+body{padding:0 0 60px;}
+
+/* ── HEADER ── */
+.exam-header{background:var(--code-bg);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:50;}
+.exam-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#e2e8f0;letter-spacing:.5px;}
+.exam-meta{display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+.meta-pill{font-family:'JetBrains Mono',monospace;font-size:12px;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,.08);color:#94a3b8;}
+.meta-pill.timer{color:#facc15;background:rgba(250,204,21,.1);}
+.meta-pill.score-live{color:#4ade80;background:rgba(74,222,128,.1);}
+
+/* ── PROGRESS ── */
+.progress-wrap{background:var(--card);border-bottom:1px solid var(--border);padding:10px 24px;}
+.progress-bar-outer{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:11px;color:var(--muted);margin-top:5px;font-family:'Syne',sans-serif;letter-spacing:.5px;text-transform:uppercase;}
+
+/* ── MAIN ── */
+.main{max-width:820px;margin:0 auto;padding:24px 20px;}
+
+/* ── START SCREEN ── */
+#start-screen{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px;}
+#start-screen h1{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:8px;}
+#start-screen p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:20px;}
+.domain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:24px;}
+.domain-chip{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+.domain-chip .d-label{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+.domain-chip .d-name{font-size:13px;color:var(--text);font-weight:500;}
+.domain-chip .d-pct{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);}
+.start-btn{background:var(--accent);color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;padding:14px 32px;border-radius:10px;border:none;cursor:pointer;letter-spacing:.5px;transition:opacity .15s;}
+.start-btn:hover{opacity:.88;}
+
+/* ── QUESTION CARD ── */
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:16px;}
+.q-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+.q-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);background:var(--bg);padding:3px 10px;border-radius:6px;flex-shrink:0;}
+.q-domain{font-size:11px;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.5px;padding:3px 10px;border-radius:6px;text-transform:uppercase;}
+.q-text{font-size:15px;line-height:1.75;color:var(--text);margin-bottom:20px;font-weight:400;}
+.q-text strong{color:var(--accent2);}
+.options{display:flex;flex-direction:column;gap:10px;}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;transition:all .15s;text-align:left;width:100%;}
+.opt:hover:not(:disabled){border-color:var(--accent);background:rgba(0,112,210,.04);}
+.opt:disabled{cursor:default;}
+.opt-letter{font-family:'Syne',sans-serif;font-weight:800;font-size:12px;min-width:22px;height:22px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .15s;}
+.opt-text{font-size:14px;color:var(--text);line-height:1.55;}
+.opt.selected{border-color:var(--accent);background:rgba(0,112,210,.06);}
+.opt.selected .opt-letter{background:var(--accent);color:#fff;}
+.opt.correct{border-color:var(--green);background:rgba(5,150,105,.06);}
+.opt.correct .opt-letter{background:var(--green);color:#fff;}
+.opt.wrong{border-color:var(--accent2);background:rgba(232,39,75,.05);}
+.opt.wrong .opt-letter{background:var(--accent2);color:#fff;}
+.opt.reveal-correct{border-color:var(--green);background:rgba(5,150,105,.04);}
+.opt.reveal-correct .opt-letter{background:var(--green);color:#fff;}
+
+/* ── EXPLANATION ── */
+.explanation{margin-top:16px;border-radius:10px;padding:14px 16px;font-size:13px;line-height:1.65;display:none;}
+.explanation.show{display:block;}
+.explanation.correct-exp{background:rgba(5,150,105,.07);border:1px solid rgba(5,150,105,.25);color:var(--text);}
+.explanation.wrong-exp{background:rgba(232,39,75,.06);border:1px solid rgba(232,39,75,.2);color:var(--text);}
+.exp-label{font-family:'Syne',sans-serif;font-weight:800;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+
+/* ── NAV ── */
+.q-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.nav-btn{padding:10px 22px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all .15s;}
+.nav-btn:hover{background:var(--bg);}
+.nav-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+.nav-btn.primary:hover{opacity:.88;}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed;}
+.submit-btn{background:var(--accent2);color:#fff;border-color:var(--accent2);padding:10px 28px;border-radius:8px;border:none;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;cursor:pointer;letter-spacing:.5px;transition:opacity .15s;}
+.submit-btn:hover{opacity:.88;}
+
+/* ── RESULTS ── */
+#results-screen{display:none;}
+.results-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:16px;}
+.score-hero{text-align:center;padding:20px 0 24px;}
+.score-circle{width:120px;height:120px;border-radius:50%;border:6px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 14px;}
+.score-circle .pct{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--accent);}
+.score-circle .frac{font-size:13px;color:var(--muted);}
+.score-verdict{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:6px;}
+.score-sub{font-size:14px;color:var(--muted);}
+.domain-breakdown{margin-top:20px;}
+.domain-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.domain-row:last-child{border-bottom:none;}
+.dr-label{font-size:13px;color:var(--text);min-width:240px;flex-shrink:0;}
+.dr-bar-wrap{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+.dr-bar{height:100%;border-radius:4px;transition:width 1s ease;}
+.dr-score{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);min-width:50px;text-align:right;}
+.retake-btn{background:var(--accent);color:#fff;border:none;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;padding:14px 32px;border-radius:10px;cursor:pointer;margin-top:20px;letter-spacing:.5px;transition:opacity .15s;}
+.retake-btn:hover{opacity:.88;}
+
+/* ── Q MAP ── */
+.q-map{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;}
+.qm-dot{width:28px;height:28px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);transition:all .15s;}
+.qm-dot.answered{background:var(--accent);color:#fff;border-color:var(--accent);}
+.qm-dot.current{border-color:var(--accent2);color:var(--accent2);}
+
+@media(max-width:600px){
+  .exam-header{padding:12px 16px;}
+  .main{padding:16px 12px;}
+  #start-screen{padding:22px 18px;}
+  .q-card{padding:18px 16px;}
+  .domain-grid{grid-template-columns:1fr;}
+  .dr-label{min-width:140px;font-size:12px;}
+}
+</style>
+</head>
+<body>
+
+<div class="exam-header">
+  <span class="exam-title">ISC2 CC · Practice Assessment</span>
+  <div class="exam-meta">
+    <span class="meta-pill timer" id="timer-display">60:00</span>
+    <span class="meta-pill score-live" id="score-display">0 / 0</span>
+    <span class="meta-pill" id="q-counter">Q 0 / 50</span>
+  </div>
+</div>
+
+<div class="progress-wrap" id="progress-wrap" style="display:none;">
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="prog-bar" style="width:0%"></div></div>
+  <div class="progress-label" id="prog-label">0 of 50 answered</div>
+</div>
+
+<div class="main">
+
+  <!-- START SCREEN -->
+  <div id="start-screen">
+    <div style="display:inline-block;background:rgba(232,39,75,.1);color:var(--accent2);font-family:'Syne',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;padding:4px 12px;border-radius:6px;margin-bottom:14px;text-transform:uppercase;">ISC2 Certified in Cybersecurity (CC)</div>
+    <h1>Practice Assessment <span style="color:var(--accent2);">— 50 Questions</span></h1>
+    <p>This assessment mirrors the style, difficulty, and domain weighting of the official ISC2 CC exam. Questions are scenario-based with one best answer. You have <strong>60 minutes</strong>. After submission, you'll receive a full domain-by-domain breakdown and explanations for every question.</p>
+    <div class="domain-grid">
+      <div class="domain-chip"><div class="d-label" style="color:var(--accent2);">Domain 1 · 26%</div><div class="d-name">Security Principles</div><div class="d-pct">13 questions</div></div>
+      <div class="domain-chip"><div class="d-label" style="color:var(--orange);">Domain 2 · 10%</div><div class="d-name">BC, DR &amp; Incident Response</div><div class="d-pct">5 questions</div></div>
+      <div class="domain-chip"><div class="d-label" style="color:var(--purple);">Domain 3 · 22%</div><div class="d-name">Access Control Concepts</div><div class="d-pct">11 questions</div></div>
+      <div class="domain-chip"><div class="d-label" style="color:var(--teal);">Domain 4 · 24%</div><div class="d-name">Network Security</div><div class="d-pct">12 questions</div></div>
+      <div class="domain-chip"><div class="d-label" style="color:var(--green);">Domain 5 · 18%</div><div class="d-name">Security Operations</div><div class="d-pct">9 questions</div></div>
+    </div>
+    <button class="start-btn" onclick="startExam()">Begin Assessment →</button>
+  </div>
+
+  <!-- QUESTION AREA -->
+  <div id="exam-area" style="display:none;">
+    <div id="q-card-area"></div>
+    <div class="q-map" id="q-map"></div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results-screen">
+    <div class="results-card">
+      <div class="score-hero">
+        <div class="score-circle" id="score-circle">
+          <span class="pct" id="res-pct">0%</span>
+          <span class="frac" id="res-frac">0/50</span>
+        </div>
+        <div class="score-verdict" id="res-verdict"></div>
+        <div class="score-sub" id="res-sub"></div>
+      </div>
+      <div class="domain-breakdown">
+        <p style="font-family:'Syne',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Domain Breakdown</p>
+        <div id="domain-rows"></div>
+      </div>
+      <div style="text-align:center;"><button class="retake-btn" onclick="retake()">Retake Assessment</button></div>
+    </div>
+    <div class="results-card" id="review-section">
+      <p style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Full Question Review</p>
+      <div id="review-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  // ── DOMAIN 1: SECURITY PRINCIPLES (13 questions) ──
+  {d:1,q:"The CIA Triad represents the three core goals of information security. Which component ensures that information is accessible to authorised users when they need it?",opts:["Confidentiality","Integrity","Availability","Accountability"],ans:2,exp:"Availability ensures that information and systems are accessible to authorised users when required. Confidentiality prevents unauthorised disclosure; Integrity prevents unauthorised modification; Accountability is not part of the CIA Triad."},
+  {d:1,q:"An attacker intercepts and modifies a financial transaction between two parties without either party's knowledge. Which element of the CIA Triad is primarily violated?",opts:["Confidentiality","Integrity","Availability","Non-repudiation"],ans:1,exp:"Integrity is violated when data is modified without authorisation. The attacker is altering the transaction, not simply viewing it (which would be a Confidentiality violation) or blocking it (which would be Availability)."},
+  {d:1,q:"A DDoS attack floods a web server with traffic, making it unreachable for legitimate users. Which CIA Triad component is primarily being attacked?",opts:["Confidentiality","Integrity","Availability","Authentication"],ans:2,exp:"A DDoS attack targets Availability by overwhelming resources so legitimate users cannot access services. No data is read or modified — the attack prevents access."},
+  {d:1,q:"Which of the following BEST describes the principle of least privilege?",opts:["Users should have access to all resources to perform any possible task","Users should only be granted the minimum access required to perform their job","All users should share a single account to simplify administration","Privileged accounts should never be used for administrative tasks"],ans:1,exp:"Least privilege means granting users only the minimum permissions necessary to complete their assigned duties. This limits the potential damage from insider threats, compromised accounts, or accidental actions."},
+  {d:1,q:"An organisation determines that a specific risk is too expensive to mitigate, so management formally accepts it and continues operations. Which risk treatment option is being applied?",opts:["Risk avoidance","Risk transference","Risk mitigation","Risk acceptance"],ans:3,exp:"Risk acceptance is the deliberate choice to acknowledge a risk and take no action to reduce it, typically because the cost of mitigation exceeds the potential loss. This decision must be formally documented by management."},
+  {d:1,q:"A security policy requires that all employees complete annual security awareness training. Which ISC2 Code of Ethics canon does this BEST support?",opts:["Protect society, the common good, necessary public trust and confidence","Act honourably, honestly, justly, responsibly and legally","Provide diligent and competent service to principals","Advance and protect the profession"],ans:0,exp:"The first canon — Protect society, the common good, necessary public trust and confidence — is best supported by mandatory security awareness training, which reduces organisational risk and protects data belonging to customers and society."},
+  {d:1,q:"What is the PRIMARY difference between a vulnerability and a threat?",opts:["A vulnerability is a potential attacker; a threat is a weakness in a system","A threat exploits a vulnerability; a vulnerability is a weakness that could be exploited","A vulnerability is the damage caused; a threat is the attacker","Vulnerabilities and threats mean the same thing in security contexts"],ans:1,exp:"A vulnerability is a weakness in a system, process, or control. A threat is a potential event or actor that could exploit that vulnerability to cause harm. Risk is the likelihood that a threat will exploit a vulnerability and the resulting impact."},
+  {d:1,q:"Which access control model determines access based on the sensitivity label of the object and the clearance level of the subject — and is typically mandated by government or military requirements?",opts:["Discretionary Access Control (DAC)","Role-Based Access Control (RBAC)","Mandatory Access Control (MAC)","Attribute-Based Access Control (ABAC)"],ans:2,exp:"Mandatory Access Control (MAC) uses security labels (Top Secret, Secret, Confidential) assigned by a central authority. Users cannot override these labels. It is commonly used in government and military systems where strict data separation is required."},
+  {d:1,q:"An employee who manages payroll is also given the ability to approve those same payroll transactions. Which security principle is being violated?",opts:["Least privilege","Separation of duties","Need to know","Defence in depth"],ans:1,exp:"Separation of duties requires that critical tasks be divided among multiple people so no single person can complete a sensitive process end-to-end without oversight. Combining payroll creation and approval in one person creates a high fraud risk."},
+  {d:1,q:"Which of the following is an example of a preventive security control?",opts:["A SIEM alert that notifies the security team of a potential breach","A firewall rule that blocks unauthorised inbound traffic","A forensic investigation conducted after an incident","An audit log that records all administrative actions"],ans:1,exp:"Preventive controls act to stop an event before it occurs. A firewall blocking traffic is preventive. A SIEM alert and forensic investigation are detective and corrective respectively. An audit log is a detective control."},
+  {d:1,q:"The concept of 'defence in depth' means that security should:",opts:["Rely on a single strong perimeter firewall","Be implemented in multiple overlapping layers so if one fails, others remain","Focus entirely on technical controls rather than administrative ones","Be transparent to users so they are never aware of it"],ans:1,exp:"Defence in depth applies multiple security layers — technical, administrative, and physical — so that the failure of any one control does not result in a complete compromise. No single control is ever entirely reliable."},
+  {d:1,q:"An organisation wants to transfer the financial risk of a potential data breach. Which risk treatment option BEST describes this?",opts:["Risk avoidance","Risk acceptance","Risk mitigation","Risk transference"],ans:3,exp:"Risk transference shifts the financial impact of a risk to a third party — most commonly through cyber insurance or contractual agreements. The organisation still faces the operational consequences of an incident, but not the full financial burden."},
+  {d:1,q:"In data governance, which role is PRIMARILY responsible for determining the sensitivity classification of data and defining who may access it?",opts:["Data custodian","Data processor","Data owner","Data steward"],ans:2,exp:"The data owner (typically a business unit manager or executive) is responsible for classifying data and defining access policies. The data custodian (usually IT) implements and maintains those controls. These are the ISC2 CC definitions for these roles."},
+
+  // ── DOMAIN 2: BC, DR & INCIDENT RESPONSE (5 questions) ──
+  {d:2,q:"During a Business Impact Analysis (BIA), the maximum amount of time a business process can be offline before unacceptable damage to the organisation occurs is called:",opts:["Recovery Time Objective (RTO)","Recovery Point Objective (RPO)","Maximum Tolerable Downtime (MTD)","Mean Time to Repair (MTTR)"],ans:2,exp:"Maximum Tolerable Downtime (MTD) is the longest period the organisation can survive without a critical business process. The RTO (Recovery Time Objective) is the target time to restore the process, which must be less than the MTD."},
+  {d:2,q:"A company's database is restored after a ransomware attack, but two days of transaction records are permanently lost. Which BCP/DR metric describes the maximum acceptable data loss the organisation had defined BEFORE the incident?",opts:["Recovery Time Objective (RTO)","Recovery Point Objective (RPO)","Maximum Tolerable Downtime (MTD)","Service Level Agreement (SLA)"],ans:1,exp:"Recovery Point Objective (RPO) defines the maximum age of data that must be recoverable — i.e., how much data loss is acceptable. If the RPO was set to 4 hours but 2 days were lost, the organisation failed to meet its RPO. The RTO is about time to restore, not data loss."},
+  {d:2,q:"An employee discovers their workstation is behaving erratically and suspects it may be infected with malware. According to the NIST incident response lifecycle, what should be the FIRST step the employee takes?",opts:["Attempt to remove the malware using antivirus software","Immediately report the suspected incident to the security team","Reboot the workstation to clear the infection","Document the incident in the change management system"],ans:1,exp:"The first step in any incident response is Detection and Reporting — the employee must report the suspected incident to the security or IT team. Self-remediation attempts may destroy forensic evidence and could worsen the situation. The security team will then begin the formal response process."},
+  {d:2,q:"Which disaster recovery site type provides the FASTEST recovery time but is also the most expensive to maintain?",opts:["Cold site","Warm site","Hot site","Mobile site"],ans:2,exp:"A hot site is a fully operational duplicate of the primary site with live data replication, allowing failover in minutes to hours. A warm site has hardware but needs data restoration. A cold site has only a facility with no equipment pre-installed, requiring days or weeks to activate."},
+  {d:2,q:"After successfully recovering from a major system outage, the incident response team conducts a meeting to review what happened, what worked, and what should be improved. This activity is known as:",opts:["Root cause analysis","Business Impact Analysis","Lessons learned / post-incident review","Risk assessment"],ans:2,exp:"A lessons learned or post-incident review (also called a post-mortem) is conducted after incident closure to identify what succeeded, what failed, and what process improvements should be made. It is the final phase of the NIST incident response lifecycle."},
+
+  // ── DOMAIN 3: ACCESS CONTROL CONCEPTS (11 questions) ──
+  {d:3,q:"A user logs into a system by providing their username and password. After authentication, the system checks whether that user has permission to access a specific file. Which access control process determines if the user may read the file?",opts:["Identification","Authentication","Authorisation","Accountability"],ans:2,exp:"Authorisation determines what an authenticated user is permitted to do — i.e., what resources they can access and what actions they may take. Identification establishes who someone claims to be. Authentication verifies that claim. Accountability tracks actions after access is granted."},
+  {d:3,q:"A user swipes a badge AND enters a PIN to enter a data centre. This is an example of:",opts:["Single-factor authentication","Multi-factor authentication","Two-step verification using the same factor type","Non-repudiation"],ans:1,exp:"Multi-factor authentication (MFA) requires two or more different categories of authentication factors. A badge is 'something you have' and a PIN is 'something you know' — these are two different factor types, making this true MFA."},
+  {d:3,q:"Which of the following is the BEST example of 'something you are' as an authentication factor?",opts:["A hardware token","A one-time passcode (OTP)","A fingerprint scan","A smart card"],ans:2,exp:"'Something you are' refers to biometric characteristics such as a fingerprint, retina scan, or facial recognition. Hardware tokens and smart cards are 'something you have.' PINs and passwords are 'something you know.'"},
+  {d:3,q:"In Role-Based Access Control (RBAC), permissions are assigned based on:",opts:["The data classification label of the resource","The individual user's identity","The user's job function or role within the organisation","The user's physical location at time of login"],ans:2,exp:"In RBAC, access rights are assigned to roles (e.g., 'nurse', 'manager', 'auditor') and users are assigned to those roles. This simplifies administration — changing a user's role automatically updates their access rights. It does not consider classification labels (MAC) or individual identity (DAC)."},
+  {d:3,q:"A file on a shared drive has permissions set so that only the user who created it can grant access to others. This is characteristic of which access control model?",opts:["Mandatory Access Control (MAC)","Role-Based Access Control (RBAC)","Discretionary Access Control (DAC)","Rule-Based Access Control"],ans:2,exp:"Discretionary Access Control (DAC) allows the resource owner (creator) to control who has access to their objects. The operating system enforces the permissions, but the owner decides them — unlike MAC where a central authority controls all access."},
+  {d:3,q:"The principle of 'need to know' means that a person should only have access to information:",opts:["They are cleared for based on their classification level","That is required to perform their specific job duties","That their manager has pre-approved in writing","On systems that they have personally configured"],ans:1,exp:"Need to know is distinct from clearance level. Even if a person has a Top Secret clearance, they should only access Top Secret information that is specifically required for their current assignment. This limits data exposure even among authorised users."},
+  {d:3,q:"A bank implements a policy that requires two employees to be present when accessing the vault. Which security concept does this BEST represent?",opts:["Separation of duties","Two-person integrity (dual control)","Least privilege","Defence in depth"],ans:1,exp:"Two-person integrity (dual control) requires two authorised individuals to be physically present for a sensitive operation. This prevents any single person from accessing critical assets alone. Separation of duties divides tasks across different people; dual control requires simultaneous presence."},
+  {d:3,q:"A system is configured to automatically log users out after 10 minutes of inactivity. This is an example of which type of access control?",opts:["Preventive","Detective","Corrective","Compensating"],ans:0,exp:"An automatic session timeout is a preventive control — it acts proactively to reduce the risk of an unattended session being exploited. It prevents a potential breach before it can occur by closing the access window."},
+  {d:3,q:"Which authentication method is considered the WEAKEST against credential theft attacks?",opts:["Smart card with PIN","Username and password only","Hardware FIDO2 security key","Biometric with liveness detection"],ans:1,exp:"Username and password alone is single-factor authentication (something you know) and is highly vulnerable to phishing, credential stuffing, and password spraying. All other options provide additional factors or hardware-bound verification that significantly increase security."},
+  {d:3,q:"An employee leaves the company. Their Active Directory account is disabled but not deleted, preserving their records for audit purposes. This action BEST supports which security principle?",opts:["Least privilege","Separation of duties","Accountability","Non-repudiation"],ans:2,exp:"Accountability requires that user actions can be attributed to an identifiable individual. Preserving disabled accounts (rather than deleting them) maintains the audit trail so past actions remain traceable, which is essential for investigations and compliance."},
+  {d:3,q:"A user's access rights are reviewed every quarter and any permissions no longer needed for their role are removed. This process is known as:",opts:["Access provisioning","Privileged access management","Access recertification / user access review","Identity federation"],ans:2,exp:"Access recertification (or user access review) is the periodic process of reviewing existing access rights and removing any that are no longer required. This enforces the principle of least privilege over time as roles and responsibilities change."},
+
+  // ── DOMAIN 4: NETWORK SECURITY (12 questions) ──
+  {d:4,q:"A firewall examines traffic based only on source and destination IP addresses and port numbers, without looking at packet contents. This is which type of firewall?",opts:["Application-layer firewall","Stateful inspection firewall","Packet filtering firewall","Next-generation firewall (NGFW)"],ans:2,exp:"A packet filtering firewall operates at Layer 3/4 and makes decisions based only on IP addresses, protocols, and port numbers — it does not track connection state or inspect packet contents. Stateful firewalls track connection state; application-layer firewalls inspect content."},
+  {d:4,q:"A stateful firewall differs from a simple packet filter in that it:",opts:["Performs deep packet inspection of application-layer protocols","Tracks the state of network connections and allows return traffic automatically","Applies content filtering to block specific websites","Decrypts and re-encrypts all HTTPS traffic"],ans:1,exp:"A stateful firewall maintains a state table to track active connections. It allows return traffic for established connections without needing explicit rules for both directions. Packet filters evaluate each packet independently with no connection context."},
+  {d:4,q:"Which network security concept BEST describes the practice of dividing a network into separate zones to limit the lateral movement of an attacker who has gained initial access?",opts:["Defence in depth","Network segmentation","DMZ placement","VPN tunnelling"],ans:1,exp:"Network segmentation divides a network into isolated zones or VLANs, limiting how far an attacker can move after initial compromise. Even if they breach one segment, they face additional barriers to reach other systems. This is a core principle of the zero trust model."},
+  {d:4,q:"A company places its public-facing web server in a DMZ. What is the PRIMARY security benefit of this architecture?",opts:["It encrypts all traffic between users and the server","It prevents the web server from being accessed from the internet","It isolates the public-facing server so that if compromised, the internal network is not immediately exposed","It removes the need for a firewall between the internet and the server"],ans:2,exp:"The DMZ (Demilitarised Zone) is a network segment positioned between the internet and the internal network. If the web server in the DMZ is compromised, the attacker still faces another firewall before reaching internal systems. This contains the blast radius."},
+  {d:4,q:"An attacker sends a large number of SYN packets to a server but never completes the TCP three-way handshake, consuming the server's connection table until it can no longer accept legitimate connections. This attack is known as:",opts:["Phishing","SYN flood (DoS)","Man-in-the-middle attack","SQL injection"],ans:1,exp:"A SYN flood exploits the TCP three-way handshake. The attacker sends SYN packets but never responds to SYN-ACK replies, filling the server's half-open connection table. This is a type of Denial of Service attack that exhausts server resources."},
+  {d:4,q:"An attacker successfully positions themselves between two communicating parties and intercepts — and potentially alters — all communications without either party being aware. This is called:",opts:["Session hijacking","Replay attack","Man-in-the-middle (on-path) attack","Eavesdropping"],ans:2,exp:"A man-in-the-middle (MITM) or on-path attack involves an attacker silently intercepting and potentially altering communications between two parties. Both parties believe they are communicating directly with each other. TLS/SSL helps prevent this by validating the identity of communicating parties."},
+  {d:4,q:"Which protocol provides secure, encrypted remote access to network devices and servers over an unsecured network, replacing the insecure Telnet?",opts:["FTP","SSH (Secure Shell)","HTTP","SNMP v1"],ans:1,exp:"SSH (Secure Shell) provides encrypted command-line remote access, replacing Telnet which transmits all data — including passwords — in cleartext. SSH uses public-key cryptography and encrypts the entire session."},
+  {d:4,q:"An IDS (Intrusion Detection System) differs from an IPS (Intrusion Prevention System) primarily in that:",opts:["An IDS blocks malicious traffic; an IPS only generates alerts","An IDS generates alerts and logs suspicious activity; an IPS can actively block or stop threats","An IDS is hardware-based; an IPS is software-based","An IDS works at the network layer; an IPS works at the application layer"],ans:1,exp:"An IDS monitors traffic and generates alerts when suspicious patterns are detected but takes no blocking action. An IPS is inline with the traffic and can actively drop malicious packets or reset connections. An IPS adds latency but provides active protection."},
+  {d:4,q:"Which of the following BEST describes a Virtual Private Network (VPN)?",opts:["A private physical network leased from a telecommunications provider","An encrypted tunnel over a public network that allows remote users to access internal resources securely","A firewall configuration that blocks all external traffic","A network access control system that validates device compliance before granting access"],ans:1,exp:"A VPN creates an encrypted tunnel over the internet (a public network), allowing remote users to access internal network resources as if they were on-site. The encryption protects data in transit from eavesdropping and interception."},
+  {d:4,q:"The OSI model layer responsible for establishing, managing, and terminating sessions between applications is:",opts:["Layer 3 — Network","Layer 4 — Transport","Layer 5 — Session","Layer 6 — Presentation"],ans:2,exp:"The Session layer (Layer 5) is responsible for establishing, maintaining, and gracefully terminating communication sessions between applications. Layer 3 handles routing; Layer 4 handles end-to-end transport (TCP/UDP); Layer 6 handles data formatting and encryption."},
+  {d:4,q:"A network administrator notices unusual traffic patterns suggesting an attacker is systematically testing every port on a range of IP addresses to find open services. This reconnaissance technique is called:",opts:["ARP poisoning","Port scanning","DNS hijacking","Packet sniffing"],ans:1,exp:"Port scanning is an active reconnaissance technique used to identify which ports are open on a target system, revealing what services are running. Nmap is the most common port scanning tool. In an authorised pentest, this is standard practice; against unauthorised targets, it is illegal."},
+  {d:4,q:"Transport Layer Security (TLS) provides which of the following security properties when used for a website connection?",opts:["Only server authentication — the user's identity is not verified","Confidentiality and integrity of data in transit, plus server authentication","Only encryption of data — it does not verify the server's identity","Protection against all malware downloads over HTTPS"],ans:1,exp:"TLS provides: (1) Confidentiality — the session is encrypted; (2) Integrity — data cannot be tampered with in transit; (3) Authentication — the server's certificate proves its identity to the client. TLS does not prevent malware delivered over an encrypted channel."},
+
+  // ── DOMAIN 5: SECURITY OPERATIONS (9 questions) ──
+  {d:5,q:"An organisation establishes a formal process for receiving, testing, approving, and documenting all modifications to its production systems before they are implemented. This is known as:",opts:["Incident response","Change management","Configuration management","Vulnerability management"],ans:1,exp:"Change management is the formal process for managing alterations to IT systems. It ensures that all changes are tested, approved, documented, and communicated before implementation, reducing the risk of unplanned outages or security vulnerabilities introduced by poorly controlled changes."},
+  {d:5,q:"Which of the following BEST describes the purpose of a data backup policy?",opts:["To prevent data from being encrypted by ransomware","To ensure that data can be restored to an acceptable state after a loss event","To restrict employee access to sensitive data","To encrypt data before it is transmitted over a network"],ans:1,exp:"The purpose of a backup policy is to ensure that data can be recovered after loss, corruption, or destruction. Backups do not prevent ransomware encryption — they enable recovery after it. Testing backups regularly is as important as taking them."},
+  {d:5,q:"The process of identifying, classifying, prioritising, remediating, and verifying weaknesses in systems and applications on a continuous basis is called:",opts:["Penetration testing","Vulnerability management","Risk assessment","Security auditing"],ans:1,exp:"Vulnerability management is an ongoing programme (not a one-time activity) that discovers vulnerabilities through scanning, classifies them by severity, prioritises remediation, applies patches or mitigations, and verifies that vulnerabilities have been addressed. Penetration testing is a point-in-time adversarial simulation."},
+  {d:5,q:"A security analyst reviews SIEM logs and notices that a privileged account logged in at 3 AM from a foreign IP address. This type of monitoring activity is:",opts:["Vulnerability scanning","Security baseline establishment","Log monitoring and anomaly detection","Network segmentation"],ans:2,exp:"Log monitoring and anomaly detection involves continuously reviewing security events and identifying activity that deviates from normal patterns (after-hours login, unusual geolocation, anomalous data volumes). A SIEM aggregates and correlates logs from multiple systems to surface these anomalies."},
+  {d:5,q:"An employee finds a USB drive in the car park and plugs it into their work computer to see what is on it. The drive installs malware silently. This attack technique is called:",opts:["Phishing","Baiting","Pretexting","Tailgating"],ans:1,exp:"Baiting involves leaving physical media (USB drives, CDs) in locations where a curious person will find and use them, triggering malware installation. It exploits curiosity rather than deception of identity (pretexting). Over 45% of dropped USB drives in studies were plugged into computers."},
+  {d:5,q:"Which of the following BEST describes the purpose of a security baseline?",opts:["A document listing all known vulnerabilities in a system","A minimum standard of security configuration that all systems must meet","The highest level of security achievable for a given system","An audit log of all changes made to a system"],ans:1,exp:"A security baseline defines the minimum acceptable security configuration for a system type (e.g., all Windows servers must have RDP disabled, host-based firewall enabled, patched within 30 days). Systems are built to and continuously compared against this baseline."},
+  {d:5,q:"After discovering a malware infection on a production server, the incident response team disconnects the server from the network before conducting forensic analysis. The act of disconnecting the server is an example of which incident response activity?",opts:["Detection","Containment","Eradication","Recovery"],ans:1,exp:"Containment is the phase where the spread or further impact of the incident is limited. Disconnecting an infected system from the network prevents the malware from spreading laterally or communicating with a C2 server. Containment comes after Detection but before Eradication and Recovery."},
+  {d:5,q:"An organisation performs regular, unannounced tests where employees receive simulated phishing emails. What is the PRIMARY goal of this programme?",opts:["To identify vulnerabilities in the email filtering system","To test the security awareness and resilience of employees, and identify those requiring additional training","To comply with PCI DSS requirements for penetration testing","To generate evidence of security effectiveness for auditors"],ans:1,exp:"Phishing simulations primarily measure and improve human security awareness. When employees click, the organisation identifies who needs more training and can deliver just-in-time education. The secondary benefit is evidence of an active security awareness programme for auditors."},
+  {d:5,q:"Which of the following physical security controls is designed to allow only one person at a time to enter a secured area, preventing tailgating?",opts:["Security camera","Badge reader","Mantrap (airlock)","Perimeter fence"],ans:2,exp:"A mantrap (or airlock) is an enclosed space with two interlocked doors — only one can open at a time. This ensures that only one person can enter per badge swipe, physically preventing tailgating. Badge readers alone cannot prevent someone from following an authorised person through an open door."},
+];
+
+// domain metadata
+const DOMAINS = {
+  1:{name:"Security Principles",color:"var(--accent2)"},
+  2:{name:"BC, DR & Incident Response",color:"var(--orange)"},
+  3:{name:"Access Control Concepts",color:"var(--purple)"},
+  4:{name:"Network Security",color:"var(--teal)"},
+  5:{name:"Security Operations",color:"var(--green)"},
+};
+
+let current = 0;
+let answers = new Array(50).fill(-1);
+let submitted = false;
+let timerInterval = null;
+let secondsLeft = 3600;
+let examStarted = false;
+
+function startExam() {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('exam-area').style.display = 'block';
+  document.getElementById('progress-wrap').style.display = 'block';
+  examStarted = true;
+  buildQMap();
+  renderQuestion(0);
+  startTimer();
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    const m = Math.floor(secondsLeft / 60).toString().padStart(2,'0');
+    const s = (secondsLeft % 60).toString().padStart(2,'0');
+    document.getElementById('timer-display').textContent = m + ':' + s;
+    if (secondsLeft <= 300) document.getElementById('timer-display').style.color = '#f87171';
+    if (secondsLeft <= 0) { clearInterval(timerInterval); submitExam(); }
+  }, 1000);
+}
+
+function buildQMap() {
+  const map = document.getElementById('q-map');
+  map.innerHTML = '';
+  QUESTIONS.forEach((q, i) => {
+    const d = document.createElement('div');
+    d.className = 'qm-dot' + (i === 0 ? ' current' : '');
+    d.textContent = i + 1;
+    d.id = 'qm-' + i;
+    d.onclick = () => { if (!submitted) { renderQuestion(i); } else { scrollToReview(i); } };
+    map.appendChild(d);
+  });
+}
+
+function updateQMap() {
+  QUESTIONS.forEach((q, i) => {
+    const d = document.getElementById('qm-' + i);
+    if (!d) return;
+    d.className = 'qm-dot';
+    if (answers[i] !== -1) d.classList.add('answered');
+    if (i === current) d.classList.add('current');
+  });
+}
+
+function renderQuestion(idx) {
+  current = idx;
+  const q = QUESTIONS[idx];
+  const dom = DOMAINS[q.d];
+  const answered = answers[idx] !== -1;
+  const letters = ['A','B','C','D'];
+
+  let optsHtml = q.opts.map((opt, i) => {
+    let cls = 'opt';
+    if (answered) {
+      if (i === q.ans) cls += ' reveal-correct';
+      else if (i === answers[idx] && answers[idx] !== q.ans) cls += ' wrong';
+    } else {
+      if (i === answers[idx]) cls += ' selected';
+    }
+    return `<button class="${cls}" onclick="selectAnswer(${idx},${i})" ${answered ? 'disabled' : ''}>
+      <span class="opt-letter">${letters[i]}</span>
+      <span class="opt-text">${opt}</span>
+    </button>`;
+  }).join('');
+
+  const expCls = answered ? ('explanation show ' + (answers[idx] === q.ans ? 'correct-exp' : 'wrong-exp')) : 'explanation';
+  const expLabel = answered ? (answers[idx] === q.ans ? '✓ Correct' : '✗ Incorrect') : '';
+
+  const isLast = idx === QUESTIONS.length - 1;
+  const allAnswered = answers.every(a => a !== -1);
+
+  document.getElementById('q-card-area').innerHTML = `
+    <div class="q-card">
+      <div class="q-header">
+        <span class="q-num">Question ${idx+1} of ${QUESTIONS.length}</span>
+        <span class="q-domain" style="background:${dom.color}18;color:${dom.color};">Domain ${q.d}: ${dom.name}</span>
+      </div>
+      <p class="q-text">${q.q}</p>
+      <div class="options">${optsHtml}</div>
+      <div class="${expCls}">
+        <div class="exp-label" style="color:${answers[idx]===q.ans?'var(--green)':'var(--accent2)'};">${expLabel}</div>
+        ${q.exp}
+      </div>
+    </div>
+    <div class="q-nav">
+      <button class="nav-btn" onclick="navigate(-1)" ${idx===0?'disabled':''}>← Previous</button>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        ${!submitted && allAnswered ? `<button class="submit-btn" onclick="submitExam()">Submit Assessment</button>` : ''}
+        ${!submitted && !allAnswered && isLast ? `<span style="font-size:12px;color:var(--muted);">${answers.filter(a=>a!==-1).length}/50 answered</span>` : ''}
+        ${submitted ? `<button class="nav-btn primary" onclick="showResults()">View Results</button>` : ''}
+      </div>
+      <button class="nav-btn primary" onclick="navigate(1)" ${idx===QUESTIONS.length-1?'disabled':''}>Next →</button>
+    </div>`;
+
+  updateQMap();
+  updateProgress();
+  updateScoreLive();
+  document.getElementById('q-counter').textContent = `Q ${idx+1} / 50`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function selectAnswer(qIdx, optIdx) {
+  if (submitted || answers[qIdx] !== -1) return;
+  answers[qIdx] = optIdx;
+  renderQuestion(qIdx);
+}
+
+function navigate(dir) {
+  const next = current + dir;
+  if (next >= 0 && next < QUESTIONS.length) renderQuestion(next);
+}
+
+function updateProgress() {
+  const done = answers.filter(a => a !== -1).length;
+  const pct = (done / QUESTIONS.length) * 100;
+  document.getElementById('prog-bar').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = `${done} of ${QUESTIONS.length} answered`;
+}
+
+function updateScoreLive() {
+  const done = answers.filter(a => a !== -1).length;
+  if (done === 0) { document.getElementById('score-display').textContent = '0 / 0'; return; }
+  const correct = answers.filter((a, i) => a === QUESTIONS[i].ans).length;
+  document.getElementById('score-display').textContent = `${correct} / ${done}`;
+}
+
+function submitExam() {
+  submitted = true;
+  clearInterval(timerInterval);
+  renderQuestion(current);
+}
+
+function showResults() {
+  document.getElementById('exam-area').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'block';
+
+  const total = QUESTIONS.length;
+  const correct = answers.filter((a, i) => a === QUESTIONS[i].ans).length;
+  const pct = Math.round((correct / total) * 100);
+
+  document.getElementById('res-pct').textContent = pct + '%';
+  document.getElementById('res-frac').textContent = correct + '/' + total;
+
+  const circle = document.getElementById('score-circle');
+  if (pct >= 70) { circle.style.borderColor = 'var(--green)'; document.getElementById('res-pct').style.color = 'var(--green)'; }
+  else if (pct >= 50) { circle.style.borderColor = 'var(--orange)'; document.getElementById('res-pct').style.color = 'var(--orange)'; }
+  else { circle.style.borderColor = 'var(--accent2)'; document.getElementById('res-pct').style.color = 'var(--accent2)'; }
+
+  const verdicts = pct >= 70 ? ['Ready for the CC Exam','Your score indicates a solid grasp of the five CC domains. Focus on any weak areas below before booking your exam.'] :
+    pct >= 50 ? ['Almost There','You have a reasonable foundation but need more practice, particularly in the domains shown in red below.'] :
+    ['More Study Needed','Significant gaps remain across one or more domains. Review the ISC2 CC study materials for each domain below before retesting.'];
+  document.getElementById('res-verdict').textContent = verdicts[0];
+  document.getElementById('res-sub').textContent = verdicts[1];
+
+  // domain breakdown
+  const domRows = document.getElementById('domain-rows');
+  domRows.innerHTML = '';
+  [1,2,3,4,5].forEach(d => {
+    const qs = QUESTIONS.filter((q,i) => q.d === d);
+    const c = qs.filter((q,i) => answers[QUESTIONS.indexOf(q)] === q.ans).length;
+    const t = qs.length;
+    const dp = Math.round((c/t)*100);
+    const barColor = dp >= 70 ? 'var(--green)' : dp >= 50 ? 'var(--orange)' : 'var(--accent2)';
+    domRows.innerHTML += `<div class="domain-row">
+      <span class="dr-label" style="color:${DOMAINS[d].color};">Domain ${d}: ${DOMAINS[d].name}</span>
+      <div class="dr-bar-wrap"><div class="dr-bar" style="width:${dp}%;background:${barColor};"></div></div>
+      <span class="dr-score">${c}/${t} (${dp}%)</span>
+    </div>`;
+  });
+
+  // full review
+  const review = document.getElementById('review-list');
+  review.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  QUESTIONS.forEach((q, i) => {
+    const ua = answers[i];
+    const correct = ua === q.ans;
+    const dom = DOMAINS[q.d];
+    review.innerHTML += `<div id="review-${i}" style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+      <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-bottom:8px;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--bg);padding:2px 8px;border-radius:4px;color:var(--muted);">Q${i+1}</span>
+        <span style="font-size:11px;font-family:'Syne',sans-serif;font-weight:700;padding:2px 8px;border-radius:4px;background:${dom.color}18;color:${dom.color};">${dom.name}</span>
+        <span style="font-size:11px;font-family:'Syne',sans-serif;font-weight:800;padding:2px 8px;border-radius:4px;background:${correct?'rgba(5,150,105,.1)':'rgba(232,39,75,.08)'};color:${correct?'var(--green)':'var(--accent2)'};">${correct?'✓ Correct':'✗ Incorrect'}</span>
+      </div>
+      <p style="font-size:14px;color:var(--text);margin-bottom:10px;line-height:1.65;">${q.q}</p>
+      ${q.opts.map((opt,j) => `<div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0;">
+        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:11px;min-width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:${j===q.ans?'var(--green)':j===ua&&ua!==q.ans?'var(--accent2)':'var(--border)'};color:${j===q.ans||j===ua?'#fff':'var(--muted)'};">${letters[j]}</span>
+        <span style="font-size:13px;color:${j===q.ans?'var(--green)':j===ua&&ua!==q.ans?'var(--accent2)':'var(--muted)'};">${opt}${j===q.ans?' ← Correct Answer':''}</span>
+      </div>`).join('')}
+      <div style="background:rgba(0,112,210,.05);border:1px solid rgba(0,112,210,.18);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:13px;color:var(--text);line-height:1.6;">
+        <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:10px;letter-spacing:1px;color:var(--accent);text-transform:uppercase;display:block;margin-bottom:4px;">Explanation</span>
+        ${q.exp}
+      </div>
+    </div>`;
+  });
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function scrollToReview(i) {
+  showResults();
+  setTimeout(() => {
+    const el = document.getElementById('review-' + i);
+    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 300);
+}
+
+function retake() {
+  answers = new Array(50).fill(-1);
+  current = 0;
+  submitted = false;
+  secondsLeft = 3600;
+  clearInterval(timerInterval);
+  document.getElementById('timer-display').textContent = '60:00';
+  document.getElementById('timer-display').style.color = '#facc15';
+  document.getElementById('score-display').textContent = '0 / 0';
+  document.getElementById('q-counter').textContent = 'Q 0 / 50';
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('exam-area').style.display = 'block';
+  buildQMap();
+  renderQuestion(0);
+  startTimer();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
